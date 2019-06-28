@@ -1,5 +1,5 @@
 # About
-The Google Cloud Platform has a service called Data Loss Prevention (DLP). This readme documents key commands to run via the Cloud Shell (browser-based shell available through GCP Console UI), then using the `gcloud` CLI.
+The Google Cloud Platform has a service called Data Loss Prevention (DLP). This readme documents key commands to run via the Cloud Shell (browser-based shell available through GCP Console), then using the `gcloud` CLI.
 
 # Setup
 
