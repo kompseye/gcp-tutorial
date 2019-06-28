@@ -27,7 +27,7 @@ gcloud projects update PROJECT_ID --name=BetterProjectName
 gcloud config set project PROJECT_ID
 ```
 
-## Quicksstart using gcloud CLI
+## Quickstart using gcloud CLI
 Use the CLI. Following [this](https://cloud.google.com/pubsub/docs/quickstart-cli) quickstart tutorial.
 
 ```bash
