@@ -3,12 +3,29 @@ The Google Cloud Platform has a service called Data Loss Prevention (DLP). This 
 
 # Setup
 
+## Create a Project
+Create a project. Following [this](https://cloud.google.com/resource-manager/docs/creating-managing-projects) step.
+
+```
+gcloud projects create PROJECT_ID
+gcloud projects create PROJECT_ID --name=NAME
+
+# arguments:
+  # PROJECT_ID is the ID for the project you want to create. A project ID must start with a lowercase letter, and can contain only ASCII letters, digits, and hyphens, and must be between 6 and 30 characters.
+  # NAME for the project you want to create. If not specified, will use project id as name.
+
+# change the name
+gcloud projects update PROJECT_ID --name=BetterProjectName
+```
+
+## Create a Service Account
 Create service account. Following [this](https://cloud.google.com/iam/docs/creating-managing-service-accounts#iam-service-accounts-create-gcloud) step.
 
 ```bash
 gcloud beta iam service-accounts create dlp-lesson-1 --description "lesson 1" --display-name "dlp-lesson-1"
 ```
 
+## Create a Service Account Key
 Create service account key. Following [this](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) step.
 
 ```bash
@@ -17,6 +34,7 @@ gcloud iam service-accounts keys create ~/key.json --iam-account [SA-NAME]@[PROJ
 
 The `iam-account` value is the `EMAIL` from command: `gcloud iam service-accounts list`
 
+## Add Role to Service Account
 Add role to service account. Following steps: [1](https://cloud.google.com/dlp/docs/auth), [2](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts).
 
 ```bash
@@ -25,18 +43,21 @@ gcloud projects add-iam-policy-binding my-project-123 \
   --role roles/editor
 ```
 
+## Activate the Service Account
 Activate the service account
 
 ```bash
 gcloud auth activate-service-account --key-file <path to key>
 ```
 
+## Obtain Authorization Token
 Obtain authorization token
 
 ```bash
 gcloud auth print-access-token
 ```
 
+## Use Authorization Token
 Use the token with DLP API call
 
 ```bash
