@@ -1,2 +1,11 @@
 # ignore mac stuff
 .DS_Store
+
+# ingore node.js stuff
+node_modules
+
+# ignore IDE stuff
+.vscode
+
+# ignore anything that could be a key
+key.json

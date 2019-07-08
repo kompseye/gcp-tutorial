@@ -27,8 +27,35 @@ gcloud projects update PROJECT_ID --name=BetterProjectName
 gcloud config set project PROJECT_ID
 ```
 
+## Create a Service Account
+Create service account. Following [this](https://cloud.google.com/iam/docs/creating-managing-service-accounts#iam-service-accounts-create-gcloud) step. The service account is used to authenticate an application to use GCP APIs.
+
+```bash
+gcloud beta iam service-accounts create pubsub-sa-1 --description "learning pubsub" --display-name "pubsub-sa-1"
+```
+
+## Create a Service Account Key
+Create service account key. Following [this](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) step.
+
+```bash
+gcloud iam service-accounts keys create ~/key.json --iam-account [SA-NAME]@[PROJECT-ID].iam.gserviceaccount.com
+```
+
+The `iam-account` value is the `EMAIL` from command: `gcloud iam service-accounts list`.
+
+Download the key.json file to your local computer. Then create environment variable, `GOOGLE_APPLICATION_CREDENTIALS` , with value as the full path to the key.json. If the environment variable is not set, GCP client libraries employ a strategy for finding the credentials. Click [here](https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application) to learn more. 
+
+## Add Role to Service Account
+Add role to service account. Following steps: [1](https://cloud.google.com/dlp/docs/auth), [2](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts).
+
+```bash
+gcloud projects add-iam-policy-binding my-project-123 \
+  --member serviceAccount:my-sa-123@my-project-123.iam.gserviceaccount.com \
+  --role roles/editor
+```
+
 ## Quickstart using gcloud CLI
-Use the CLI. Following [this](https://cloud.google.com/pubsub/docs/quickstart-cli) quickstart tutorial.
+Use the CLI. Following [this](https://cloud.google.com/pubsub/docs/quickstart-cli) quickstart tutorial. This is a simple demonstration of creating a topic, subscription, followed by message publish and receive.
 
 ```bash
 # create topic
@@ -39,7 +66,7 @@ gcloud pubsub topics list
 
 # create subscription
 gcloud pubsub subscriptions create --topic my-topic my-subscription
-# From man page: "Creates one or more Cloud Pub/Sub subscriptions for a given topic. The new subscription defaults to a PULL subscription unless a push endpoint is specified."
+# From man page: "Creates one or more Cloud Pub/Sub subscriptions for a given topic. The new subscription defaults to a PULL subscription unless a PUSH endpoint is specified."
 
 # confirm
 gcloud pubsub subscriptions list
@@ -58,3 +85,82 @@ gcloud pubsub subscriptions pull --auto-ack my-subscription
 └────────────────┴─────────────────┴────────────┘
 ```
 
+## Sample Program
+
+### Node.js
+
+Following the docs for [Node.js Pub/Sub client library](https://github.com/googleapis/nodejs-pubsub).
+
+#### Create a new project
+```bash
+# start new Node.js project (follow prompts)
+npm init
+
+# add client library
+npm install @google-cloud/pubsub
+
+# create a Javascript file
+touch HelloPubSub.js
+```
+
+#### Publish to Topic
+```javascript
+async function demoPublish() {
+    projectId = 'my-project';
+    topicName = 'my-topic';
+
+    // import the pubsub client library
+    const { PubSub } = require('@google-cloud/pubsub');
+
+    // create client
+    const pubsub = new PubSub({projectId});
+
+    // create data
+    helloWorld = {
+            "msg": "hello Node.js pub/sub"
+        };
+
+    // publish data
+    const messageId = await pubsub.topic(topicName).publishJSON(helloWorld);
+    console.log(`Message ${messageId} published.`)
+}
+```
+
+#### Receive Message From Topic
+Note that the messages are received via a topic subscription which is assumed to exist by name `my-subscription`. See the section above named "Quickstart using gcloud CLI".
+```javascript
+async function demoReceive() {
+    const timeout = 10;
+    projectId = 'my-project';
+    topicName = 'my-topic';
+
+    // Receive the message via the subscription
+    //   https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js
+
+    // authentication is required and can be supplied using the environment variable: GOOGLE_APPLICATION_CREDENTIALS
+    const pubsub = new PubSub({projectId});
+
+    // obtain handle to the subscription
+    const subscription = pubsub.subscription("my-subscription");
+
+    // create message handler (and use it later)
+    let messageCount = 0;
+    const messageHandler = (message) => {
+        console.log(`Received message ${message.id}:`);
+        console.log(`\tData: ${message.data}`);
+        console.log(`\tAttributes: ${message.attributes}`);
+        messageCount += 1;
+
+        // Acknowledge the message
+        message.ack();
+    }
+
+    // listen for messages via the subscription
+    subscription.on(`message`, messageHandler);
+
+    setTimeout(() => {
+        subscription.removeListener(`message`, messageHandler);
+        console.log(`${messageCount} messages(s) received.`);
+    }, timeout * 1000)
+}
+```
