@@ -113,12 +113,15 @@ async function demoPublish() {
     const { PubSub } = require('@google-cloud/pubsub');
 
     // create client
+    // authentication is required and can be supplied using the environment variable: GOOGLE_APPLICATION_CREDENTIALS
+    // Noteworthy: authentication can be supplied with "keyFile" configuration
+    // const pubsub = new PubSub({projectId, keyFile: "/full/path/to/key.json"});
     const pubsub = new PubSub({projectId});
 
     // create data
     helloWorld = {
             "msg": "hello Node.js pub/sub"
-        };
+    };
 
     // publish data
     const messageId = await pubsub.topic(topicName).publishJSON(helloWorld);
@@ -137,7 +140,10 @@ async function demoReceive() {
     // Receive the message via the subscription
     //   https://github.com/googleapis/nodejs-pubsub/blob/master/samples/subscriptions.js
 
+    // create client
     // authentication is required and can be supplied using the environment variable: GOOGLE_APPLICATION_CREDENTIALS
+    // Noteworthy: authentication can be supplied with "keyFile" configuration
+    // const pubsub = new PubSub({projectId, keyFile: "/full/path/to/key.json"});
     const pubsub = new PubSub({projectId});
 
     // obtain handle to the subscription
