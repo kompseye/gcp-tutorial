@@ -22,7 +22,7 @@ gcloud projects update PROJECT_ID --name=BetterProjectName
 ```
 
 ## Clone Sample Code
-1. Clone this repo: `git clone https://github.com/GoogleCloudPlatform/nodesamples`
+1. Clone this repo: `git clone https://github.com/GoogleCloudPlatform/golang-samples.git`
 
 ## Run Sample Code
 1. Change directory: `cd golang-samples/appengine/go11x/helloworld`
