@@ -4,7 +4,7 @@ The Google Cloud Platform has a service called [Cloud Pub/Sub](https://cloud.goo
 The main idea:
 * Application X subscribes to a topic
 * Application Y publishes messages to a topic
-* Applicaiton Xd receives messages via its topic subscription
+* Applicaiton X receives messages via its topic subscription
 
 
 # Setup
